@@ -1,0 +1,100 @@
+{{define "common/sidebar.html"}}
+    <div class="rbox">
+        <div class="whitebg paihang">
+            <h2 class="htitle">点击排行</h2>
+            {{range $k,$v := .GetClickArticleList}}
+                {{if eq $k 0}}
+                    <section class="topnews imgscale">
+                        {{if eq $v.Thumb ""}}
+                            <a href="/{{$v.Path}}"><img src="/storage/images/h1.jpg" alt="{{$v.Title}}"><span>{{$v.Title}}</span></a>
+                        {{else}}
+                            <a href="/{{$v.Path}}"><img src="{{$v.Thumb}}" alt="{{$v.Title}}"><span>{{$v.Title}}</span></a>
+                        {{end}}
+                    </section>
+                {{end}}
+            {{end}}
+
+            <ul>
+                {{range $k,$v := .GetClickArticleList}}
+                    {{if gt $k 0}}
+                        <li><i></i><a href="/{{$v.Path}}">{{$v.Title}}</a></li>
+                    {{end}}
+                {{end}}
+            </ul>
+        </div>
+
+        <div class="whitebg tuijian">
+            <h2 class="htitle">精品推荐</h2>
+            {{range $k,$v := .GetClickArticleList}}
+                {{if eq $k 0}}
+                    <section class="topnews imgscale">
+                        {{if eq $v.Thumb ""}}
+                            <a href="/{{$v.Path}}"><img src="/storage/images/h2.jpg" alt="{{$v.Title}}"><span>{{$v.Title}}</span></a>
+                        {{else}}
+                            <a href="/{{$v.Path}}"><img src="{{$v.Thumb}}" alt="{{$v.Title}}"><span>{{$v.Title}}</span></a>
+                        {{end}}
+                    </section>
+                {{end}}
+            {{end}}
+            <ul>
+                {{range $k,$v := .GetClickArticleList}}
+                    {{if gt $k 0}}
+                        <li><a href="{{$v.Path}}"><i><img src="{{$v.Thumb}}" alt="{{$v.Title}}"></i>
+                                <p>{{$v.Title}}</p>
+                            </a>
+                        </li>
+                    {{end}}
+                {{end}}
+            </ul>
+        </div>
+
+
+        {{$banner2 := .Banner2.SlideBanner}}
+        {{if eq .IsBanner2 true}}
+            <div class="ad whitebg imgscale">
+                <ul>
+                    {{range $k,$v := $banner2}}
+                        {{if eq $k 0}}
+                            <a href="{{$v.Url}}"><img src="{{$v.Thumb}}" alt="{{$v.Title}}" /></a>
+                        {{end}}
+                    {{end}}
+                </ul>
+            </div>
+        {{end}}
+
+
+        <div class="whitebg cloud">
+            <h2 class="htitle"><span class="sqlink"><a href="/tags-all" target="_blank">更多</a></span>标签云</h2>
+            <ul>
+                {{range $k,$v := .GetTagsByNum}}
+                <a href="/tags/{{$v.ID}}" target="_blank">{{$v.TagName}}</a>
+                {{end}}
+            </ul>
+        </div>
+
+
+        <div class="whitebg wenzi">
+            <h2 class="htitle">猜你喜欢</h2>
+            <ul>
+                {{range $k,$v := .GetNiceArticleList2}}
+                    <li><a href="/{{$v.Path}}">{{$v.Title}}</a></li>
+                {{end}}
+            </ul>
+        </div>
+
+        {{$banner3 := .Banner3.SlideBanner}}
+        {{if eq .IsBanner3 true}}
+            <div class="ad whitebg imgscale">
+                <ul>
+                    {{range $k,$v := $banner3}}
+                        {{if eq $k 0}}
+                            <a href="{{$v.Url}}"><img src="{{$v.Thumb}}" alt="{{$v.Title}}" /></a>
+                        {{end}}
+                    {{end}}
+                </ul>
+            </div>
+        {{end}}
+
+
+    </div>
+{{end}}

@@ -1,0 +1,303 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>首页-{{.Setting.SEO.SeoTitle}}</title>
+    <meta name="keywords" content="{{.Setting.SEO.SeoKey}}"/>
+    <meta name="description" content="{{.Setting.SEO.SeoDesc}}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "common/meta.html" .}}
+</head>
+<body>
+
+{{template "common/top.html" .}}
+
+<article>
+    <!--lbox begin-->
+    <div class="lbox">
+        {{$banner := .Banner.SlideBanner}}
+        {{if eq .IsBanner true}}
+            <!--banbox begin-->
+            <div class="banbox">
+                <div class="banner">
+                    <div id="banner" class="fader">
+                        {{range $k,$v := $banner}}
+                            <li class="slide"><a href="{{$v.Url}}" target="_blank"><img src="{{$v.Thumb}}"
+                                                                                        alt="{{$v.Title}}"></a></li>
+                        {{end}}
+                        <div class="fader_controls">
+                            <div class="page prev" data-target="prev"></div>
+                            <div class="page next" data-target="next"></div>
+                            <ul class="pager_list">
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--banbox end-->
+
+            <!--headline begin-->
+            <div class="headline">
+                <ul>
+                    {{range $k,$v := .ArticleTop}}
+                        <li><a href="{{$v.Path}}" title="{{$v.Title}}"><img src="{{$v.Thumb}}"
+                                                                            alt="{{$v.Title}}"><span>{{$v.Title}}</span></a>
+                        </li>
+                    {{end}}
+                </ul>
+            </div>
+            <!--headline end-->
+        {{end}}
+
+
+        <div class="clearblank"></div>
+        <div class="tab_box whitebg">
+            <div class="tab_buttons">
+                <ul>
+                    {{$tabCate := .GetTabArticle.Category}}
+                    {{range $k,$v := $tabCate}}
+                        <li {{if eq $k 0}}class="newscurrent"{{end}}>{{$v}}</li>
+                    {{end}}
+                </ul>
+            </div>
+            <div class="newstab">
+                {{$tabArticle := .GetTabArticle.Article}}
+                {{range $key,$item := $tabArticle}}
+                <div class="newsitem">
+
+                    <div class="newspic">
+                        <ul>
+                            {{range $p,$q := $item}}
+                                {{if lt $p 2}}
+                                    {{if eq $q.Thumb ""}}
+                                        <li><a href="{{$q.Path}}"><img src="/storage/images/h2.jpg" alt="{{$q.Title}}"><span>{{$q.Title}}</span></a></li>
+                                    {{else}}
+                                        <li><a href="{{$q.Path}}"><img src="{{$q.Thumb}}" alt="{{$q.Title}}"><span>{{$q.Title}}</span></a></li>
+                                    {{end}}
+                                {{end}}
+                            {{end}}
+                        </ul>
+                    </div>
+
+                    <ul class="newslist">
+
+                        {{range $p,$q := $item}}
+                            {{if gt $p 1}}
+                        <li><i></i><a href="{{$q.Path}}">{{$q.Title}}</a>
+                            <p>{{$q.Desc}}</p>
+                        </li>
+                            {{end}}
+                        {{end}}
+
+                    </ul>
+                </div>
+                {{end}}
+            </div>
+        </div>
+        <!--tab_box end-->
+        <div class="zhuanti whitebg">
+            <h2 class="htitle"><span class="hnav"></span>精彩专题</h2>
+            <ul>
+                {{range $k,$v := .GetNiceArticleList}}
+                <li>
+                    <i class="ztpic">
+                        <a href="{{$v.Path}}" target="_blank">
+                            <img src="{{$v.Thumb}}" alt="{{$v.Title}}" />
+                        </a>
+                    </i> <b>{{$v.Title}}</b>
+                    <span>{{$v.Desc}}</span>
+                    <a href="{{$v.Path}}" target="_blank" class="readmore">文章阅读</a>
+                </li>
+                {{end}}
+            </ul>
+        </div>
+
+        {{$banner1 := .Banner1.SlideBanner}}
+        {{if eq .IsBanner1 true}}
+        <div class="ad whitebg">
+            {{range $k,$v := $banner1}}
+                {{if eq $k 0}}
+                    <a href="{{$v.Url}}"><img src="{{$v.Thumb}}" alt="{{$v.Title}}" /></a>
+                {{end}}
+            {{end}}
+        </div>
+        {{end}}
+
+        <div class="whitebg bloglist">
+            <h2 class="htitle">最新博文</h2>
+            <ul>
+                <!--多图模式 置顶设计-->
+                {{range $k,$v := .GetTopArticleList}}
+                <li>
+                    <h3 class="blogtitle"><a href="{{$v.Path}}" target="_blank"><b>【顶】</b>{{$v.Title}}</a></h3>
+                    {{if ne $v.ThumbExt ""}}
+                    <span class="bplist">
+                        {{range $p,$q := $v.Pics}}
+                        <a href="{{$v.Path}}"> <img src="{{$q}}" alt="{{$v.Title}}"></a>
+                        {{end}}
+                    </span>
+                    {{end}}
+                    <p class="blogtext">{{$v.Desc}}</p>
+
+                    <p class="auth-span">
+                        <span class="muted">
+                            <i class="fa fa-clock-o"></i> {{$v.Createtime}}</span>
+                        <span class="muted"><i class="fa fa-eye"></i> {{$v.Read}}浏览</span>
+                        <span class="muted"><a href="javascript:;" data-action="ding" data-id="169" id="Addlike" class="action"><i class="fa fa-heart-o"></i><span class="count">{{$v.Like}}</span>个赞</a></span>
+                    </p>
+
+                </li>
+                {{end}}
+
+                <!--单图-->
+
+                {{range  $k,$v := .GetNewArticleList}}
+                <li>
+                    <h3 class="blogtitle"><a href="{{$v.Path}}" target="_blank">{{$v.Title}}</a>
+                    </h3>
+                    {{if ne $v.Thumb ""}}
+                    <span class="blogpic imgscale">
+                        <!--<i><a href="{{$v.Path}}">原创模板</a></i>-->
+                        <a href="{{$v.Path}}" title="{{$v.Title}}"><img src="{{$v.Thumb}}" alt="{{$v.Title}}"></a>
+                    </span>
+                    {{end}}
+                    <p class="blogtext">
+                        {{$v.Desc}}
+                    </p>
+
+                    <p class="auth-span">
+                        <span class="muted">
+                            <i class="fa fa-clock-o"></i> {{$v.Createtime}}</span>
+                        <span class="muted"><i class="fa fa-eye"></i> {{$v.Read}}浏览</span>
+                        <span class="muted"><a href="javascript:;" data-action="ding" data-id="169" id="Addlike" class="action"><i class="fa fa-heart-o"></i><span class="count">{{$v.Like}}</span>个赞</a></span>
+                    </p>
+
+                    <a href="{{$v.Path}}" class="viewmore">阅读更多</a>
+
+                </li>
+                {{end}}
+
+            </ul>
+        </div>
+        <!--bloglist end-->
+    </div>
+    <div class="rbox">
+        <div class="card">
+            <h2>我的名片</h2>
+            <p>网名：{{.Setting.Basic.Username}}</p>
+            <p>职业：{{.Setting.Basic.Occupation}}</p>
+            <p>现居：{{.Setting.Basic.Address}}</p>
+            <p>Email：{{.Setting.Basic.Email}}</p>
+            <ul class="linkmore">
+
+
+                <li><a href="{{.Setting.Basic.SiteUrl}}" target="_blank" class="iconfont icon-zhuye" title="网站地址"></a></li>
+                <li><a href="{{.Setting.Basic.EmailMe}}" target="_blank" class="iconfont icon-youxiang" title="我的邮箱"></a></li>
+                <li><a href="http://wpa.qq.com/msgrd?v=3&uin={{.Setting.Basic.QQ}}&site=qq&menu=yes" target="_blank" class="iconfont icon---" title="QQ联系我"></a></li>
+                <li id="weixin">
+                    <a href="/" target="_blank" class="iconfont icon-weixin" title="关注我的微信"></a>
+                    <i><img src="{{.Setting.Basic.Wechat}}"></i>
+                </li>
+            </ul>
+        </div>
+
+        <div class="whitebg paihang">
+            <h2 class="htitle">点击排行</h2>
+
+            {{range $k,$v := .GetClickArticleList}}
+                {{if eq $k 0}}
+                <section class="topnews imgscale">
+                    {{if eq $v.Thumb ""}}
+                    <a href="{{$v.Path}}"><img src="/storage/images/h1.jpg" alt="{{$v.Title}}"><span>{{$v.Title}}</span></a>
+                        {{else}}
+                    <a href="{{$v.Path}}"><img src="{{$v.Thumb}}" alt="{{$v.Title}}"><span>{{$v.Title}}</span></a>
+                    {{end}}
+                </section>
+                {{end}}
+            {{end}}
+            <ul>
+                {{range $k,$v := .GetClickArticleList}}
+                {{if gt $k 0}}
+                <li><i></i><a href="{{$v.Path}}">{{$v.Title}}</a></li>
+                {{end}}
+                {{end}}
+            </ul>
+        </div>
+
+        <div class="whitebg tuijian">
+            <h2 class="htitle">站长推荐</h2>
+            {{range $k,$v := .GetClickArticleList}}
+            {{if eq $k 0}}
+            <section class="topnews imgscale">
+                {{if eq $v.Thumb ""}}
+                <a href="{{$v.Path}}"><img src="/storage/images/h2.jpg" alt="{{$v.Title}}"><span>{{$v.Title}}</span></a>
+                {{else}}
+                <a href="{{$v.Path}}"><img src="{{$v.Thumb}}" alt="{{$v.Title}}"><span>{{$v.Title}}</span></a>
+                {{end}}
+            </section>
+            {{end}}
+            {{end}}
+            <ul>
+                {{range $k,$v := .GetClickArticleList}}
+                {{if gt $k 0}}
+                <li><a href="{{$v.Path}}"><i><img src="{{$v.Thumb}}" alt="{{$v.Title}}"></i>
+                        <p>{{$v.Title}}</p>
+                    </a>
+                </li>
+                {{end}}
+                {{end}}
+            </ul>
+        </div>
+
+
+        {{$banner2 := .Banner2.SlideBanner}}
+        {{if eq .IsBanner2 true}}
+        <div class="ad whitebg imgscale">
+            <ul>
+                {{range $k,$v := $banner2}}
+                {{if eq $k 0}}
+                    <a href="{{$v.Url}}"><img src="{{$v.Thumb}}" alt="{{$v.Title}}" /></a>
+                {{end}}
+                {{end}}
+            </ul>
+        </div>
+        {{end}}
+
+        <div class="whitebg wenzi">
+            <h2 class="htitle">猜你喜欢</h2>
+            <ul>
+                {{range $k,$v := .GetNiceArticleList2}}
+                <li><a href="{{$v.Path}}">{{$v.Title}}</a></li>
+                {{end}}
+            </ul>
+        </div>
+
+
+        {{$banner3 := .Banner3.SlideBanner}}
+        {{if eq .IsBanner3 true}}
+            <div class="ad whitebg imgscale">
+                <ul>
+                    {{range $k,$v := $banner3}}
+                        {{if eq $k 0}}
+                            <a href="{{$v.Url}}"><img src="{{$v.Thumb}}" alt="{{$v.Title}}" /></a>
+                        {{end}}
+                    {{end}}
+                </ul>
+            </div>
+        {{end}}
+
+        <div class="links whitebg">
+            <h2 class="htitle"><span class="sqlink"><a href="/link" target="_blank">更多</a></span>友情链接</h2>
+            <ul>
+                {{range  $k,$v := .GetIndexLinkList}}
+                <li><a href="{{$v.Url}}" target="_blank">{{$v.Title}}</a></li>
+                {{end}}
+            </ul>
+        </div>
+    </div>
+</article>
+
+
+{{template "common/footer.html" .}}
+</body>
+</html>

@@ -1,0 +1,346 @@
+<template>
+	<div class="common-container">
+
+		<div class="table">
+			<div class="toolbar">
+				<el-button type="primary" size="mini" @click="addGroup">添加</el-button>
+
+				<el-popconfirm title="确认要删除？删除后不可恢复" confirmButtonText='确定' cancelButtonText='取消' @confirm="delAll">
+					<template slot="reference">
+						<el-button type="danger" size="mini" style="margin-left: 10px;">删除</el-button>
+					</template>
+				</el-popconfirm>
+
+			</div>
+			<div class="table-container">
+				<el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
+					:header-cell-style="{background:'#f6f6f6',color:'#606266'}" :border="true" :key="Math.random()"
+					@selection-change="selectionLineChangeHandle">
+					<el-table-column type="selection" width="55" :selectable="selectable"></el-table-column>
+
+					<el-table-column label="ID" prop="id" width="80"></el-table-column>
+
+					<el-table-column prop="address" label="排序" width="100">
+						<template slot-scope="scope">
+							<el-input v-model="scope.row.sort" size="mini" @change="update(scope.row)"></el-input>
+						</template>
+					</el-table-column>
+
+					<el-table-column prop="name" label="名称"></el-table-column>
+					<el-table-column prop="createtime" label="创建时间"></el-table-column>
+					<el-table-column prop="updatetime" label="更新时间"></el-table-column>
+
+					<el-table-column prop="amount" label="状态" align="center" show-overflow-tooltip>
+						<template slot-scope="scope">
+							<el-switch v-if="scope.row.id > 1" v-model="scope.row.status" :active-value="1"
+								:inactive-value="0" active-color="#5B7BFA" inactive-color="#dadde5"
+								@click.native="update(scope.row)">
+							</el-switch>
+						</template>
+					</el-table-column>
+
+					<el-table-column fixed="right" label="操作" width="100">
+						<template slot-scope="scope">
+							<el-button v-if="scope.row.id > 1" type="text" size="small" @click="editGroup(scope.row)">编辑
+							</el-button>
+
+							<el-popconfirm v-if="scope.row.id > 1" title="确认要删除？删除后不可恢复" confirmButtonText='确定'
+								cancelButtonText='取消' @confirm="del(scope.row.id)">
+								<template slot="reference">
+									<el-button type="text" size="small">
+										删除
+									</el-button>
+								</template>
+							</el-popconfirm>
+
+						</template>
+					</el-table-column>
+				</el-table>
+
+				<el-pagination background layout="prev, pager, next" :total="page.count" :page-size="page.pageSize"
+					:current-page="page.page" @current-change="changePage">
+				</el-pagination>
+			</div>
+		</div>
+
+		<el-dialog :title="formTitle" :visible.sync="dialogFormVisible" destroy-on-close width="45%"
+			custom-class="my-dialog" :close-on-click-modal="false">
+			<el-scrollbar wrap-class="form-wrapper">
+				<el-form ref="form" :model="form" label-width="100px">
+					<el-form-item label="名称" prop="name">
+						<el-input autocomplete="off" v-model="form.name" placeholder="请输入角色名称"></el-input>
+					</el-form-item>
+
+					<el-form-item label="权限" prop="rules">
+						<el-tree :props="tree.treeProps" :data="tree.treeData" node-key="value" show-checkbox
+							default-expand-all :default-checked-keys="tree.checkedKeys" @check="checkTree">
+						</el-tree>
+					</el-form-item>
+
+					<el-form-item label="状态" prop="status">
+						<el-switch v-model="form.status" :active-value="1" :inactive-value="0" active-color="#5B7BFA"
+							inactive-color="#dadde5">
+						</el-switch>
+					</el-form-item>
+				</el-form>
+			</el-scrollbar>
+			<template slot="footer">
+				<span class="dialog-footer">
+					<el-button @click="dialogFormVisible = false" size="mini">取 消</el-button>
+					<el-button type="primary" @click="save('form')" size="mini">确 定</el-button>
+				</span>
+			</template>
+		</el-dialog>
+
+	</div>
+
+</template>
+
+<script>
+	import {
+		getGroupIndex,
+		saveGroup,
+		delGroup,
+		delAllGroup,
+		cascadeMenu
+	} from '@/api/auth/index.js'
+
+
+	export default {
+		name: "AuthGroup",
+		data() {
+			return {
+				title: "首页",
+				showAll2: true,
+				dialogFormVisible: false,
+				word: "展开搜索",
+				tips: "操作提示",
+				tableData: [],
+				page: {
+					count: 0,
+					page: 1,
+					pageSize: 8
+				},
+				formTitle: "添加",
+				form: {
+					status: 1,
+					name: "",
+					id: 0,
+					rules: "",
+					sort: 1000,
+					halfcheck: ""
+				},
+				tree: {
+					treeProps: {
+						children: 'children',
+						label: 'label'
+					},
+					treeData: [],
+					checkedKeys: []
+				},
+				selects: ""
+			}
+		},
+		methods: {
+			shrink2() {
+				this.showAll2 = !this.showAll2
+			},
+			//获取数据
+			getData() {
+				getGroupIndex({
+					page: this.page.page,
+					page_size: this.page.pageSize
+				}).then(res => {
+					this.tableData = res.data.data.list
+					this.page.count = res.data.data.page.count
+					this.page.page = res.data.data.page.page
+					this.page.pageSize = res.data.data.page.page_size
+				})
+			},
+			//编辑角色组
+			editGroup(row) {
+				// console.log(row)
+				this.dialogFormVisible = true
+				this.formTitle = "编辑"
+				this.form.name = row.name
+				this.form.status = row.status
+				this.form.id = row.id
+				this.form.sort = row.sort
+				this.form.rules = row.rules
+				this.form.halfcheck = row.halfcheck
+
+				this.tree.checkedKeys = row.rules.split(",")
+				this.cascadeMenu()
+			},
+			//添加角色组
+			addGroup() {
+				this.dialogFormVisible = true
+				this.formTitle = "添加"
+				this.form.name = ""
+				this.form.status = 1
+				this.form.id = 0
+				this.form.rules = ""
+				this.form.sort = 1000
+				this.form.halfcheck = ""
+
+				this.cascadeMenu()
+				this.tree.checkedKeys = []
+			},
+			//保存角色组
+			save() {
+				const loading = this.$loading({
+					lock: true,
+					text: 'Loading',
+					spinner: 'el-icon-loading',
+					background: 'rgba(0, 0, 0, 0.7)'
+				});
+
+				saveGroup(this.form).then(res => {
+					if (res.data.code != 200) {
+						this.$message.error(res.data.msg);
+						setTimeout(() => {
+							loading.close();
+						}, 1000);
+						return false;
+					}
+
+					this.getData()
+
+					this.$message({
+						message: res.data.msg,
+						type: 'success'
+					});
+
+					this.dialogFormVisible = false
+
+					setTimeout(() => {
+						loading.close();
+						//跳转页面
+						//window.location.reload()
+					}, 1000);
+					return true;
+				})
+			},
+			//删除角色组
+			del(id) {
+				const loading = this.$loading({
+					lock: true,
+					text: 'Loading',
+					spinner: 'el-icon-loading',
+					background: 'rgba(0, 0, 0, 0.7)'
+				});
+
+				delGroup({
+					id: id
+				}).then(res => {
+
+					if (res.data.code != 200) {
+						this.$message.error(res.data.msg);
+						setTimeout(() => {
+							loading.close();
+						}, 1000);
+						return false;
+					}
+
+					this.getData()
+
+					this.$message({
+						message: res.data.msg,
+						type: 'success'
+					});
+
+					setTimeout(() => {
+						loading.close();
+						//跳转页面
+						// window.location.reload()
+					}, 1000);
+					return true;
+				})
+			},
+			//获取节点
+			loadNode() {
+				//todo 待定
+			},
+			//分页数据
+			changePage(currentPage) {
+				this.page.page = currentPage
+				this.getData()
+			},
+			//选中
+			selectable(row, index) {
+				// console.log(row,index)
+				if (row.id == 1) {
+					return false
+				} else {
+					return true
+				}
+			},
+			//选中的值
+			selectionLineChangeHandle(val) {
+				var selects = []
+				val.forEach((item, index) => {
+					selects.push(item.id)
+				})
+				this.selects = selects.join(",")
+			},
+			//删除所有
+			delAll() {
+				// console.log(this.selects)
+				delAllGroup({
+					id: this.selects
+				}).then(res => {
+					if (res.data.code != 200) {
+						this.$message.error(res.data.msg);
+						return false;
+					}
+
+					this.getData()
+
+					this.$message({
+						message: res.data.msg,
+						type: 'success'
+					});
+				})
+			},
+			//更新信息
+			update(row) {
+				this.form.name = row.name
+				this.form.status = row.status
+				this.form.id = row.id
+				this.form.sort = row.sort
+				this.form.rules = row.rules
+				this.save()
+			},
+			//树形菜单
+			cascadeMenu() {
+				cascadeMenu({}).then(res => {
+					this.tree.treeData = res.data.data
+				})
+			},
+			//选中节点
+			checkTree(checkedNodes, checkedKeys, halfCheckedNodes, halfCheckedKeys) {
+				this.form.rules = checkedKeys.checkedKeys.join(",")
+				this.form.halfcheck = checkedKeys.halfCheckedKeys.join(",")
+			},
+			//监听回车键
+			keyupSubmit() {
+				document.onkeydown = e => {
+					let _key = window.event.keyCode;
+					if (_key === 13) {
+						this.save('form')
+					}
+				}
+			}
+		},
+		mounted() {
+			this.getData()
+		},
+		created() {
+			this.keyupSubmit()
+		}
+	}
+</script>
+
+<style lang="scss" scoped="scoped">
+
+</style>

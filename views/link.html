@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>列表页-{{.Setting.SEO.SeoTitle}}</title>
+<meta name="keywords" content="{{.Setting.SEO.SeoKey}}" />
+<meta name="description" content="{{.Setting.SEO.SeoDesc}}" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {{template "common/meta.html" .}}
+</head>
+<body>
+<!--top begin-->
+{{template "common/top.html" .}}
+<!--top end-->
+
+<article>
+  <div class="whitebg" style="min-height: 500px;">
+
+    <h2 class="htitle"><span class="hnav"></span>友情链接</h2>
+    <ul class="site_tj">
+      {{range $k,$v := .Link}}
+      <li><a href="{{$v.Url}}" target="_blank" title="{{$v.Title}}">{{$v.Title}}</a></li>
+      {{end}}
+    </ul>
+  </div>
+
+</article>
+
+{{template "common/footer.html" .}}
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>文章内容页-{{.Article.SeoTitle}}</title>
+    <meta name="keywords" content="{{.Article.SeoKey}}"/>
+    <meta name="description" content="{{.Article.SeoDesc}}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "common/meta.html" .}}
+</head>
+<body>
+<!--top begin-->
+{{template "common/top.html" .}}
+<!--top end-->
+<article>
+    <!--lbox begin-->
+    <div class="lbox">
+        <div class="content_box whitebg">
+            <h2 class="htitle">
+                <span class="con_nav">您现在的位置是：
+                    <a href="/">网站首页</a>
+                    {{range $k,$v := .Crumbs}}
+                        >
+                        <a href="{{$v.Key}}">{{$v.Name}}</a>
+                    {{end}}
+                </span>
+                {{.Article.Category.Name}}
+            </h2>
+
+            <h1 class="con_tilte">{{.Article.Title}}</h1>
+
+            <p class="bloginfo">
+                <i class="avatar"><img src="{{.Article.Admin.Avatar}}"></i>
+                <span>{{.Article.Admin.Username}}</span>
+
+                <span>{{.Article.Createtime}}</span>
+                {{$tags := .Article.Tags}}
+                {{range $k,$v := $tags}}
+                    <span>【<a href="/tags/{{$v.ID}}">{{$v.TagName}}</a>】</span>
+                {{end}}
+                <span>{{.Article.Read}}人已围观</span>
+            </p>
+
+            <p class="con_info"><b>简介</b>{{.Article.Desc}}</p>
+            <div class="con_text">
+                {{.Article.Content | StringToTemplate}}
+
+                <p class="share"><b>转载：</b>{{.Setting.Basic.Reprint}}</p>
+                <p><span class="diggit" style="cursor: pointer" onclick="like({{.Article.ID}})">很赞哦！ ({{.Article.Like}})</span></p>
+
+                <div class="nextinfo">
+                    {{if eq .IsPrev true}}
+                        <p>上一篇：没有了</p>
+                    {{else}}
+                        <p>上一篇：<a href="{{.Prev.Path}}">{{.Prev.Title}}</a></p>
+                    {{end}}
+
+                    {{if eq .IsNext true}}
+                        <p>下一篇：没有了</p>
+                    {{else}}
+                        <p>下一篇：<a href="{{.Next.Path}}">{{.Next.Title}}</a></p>
+                    {{end}}
+                </div>
+
+            </div>
+        </div>
+
+        <div class="whitebg">
+            <h2 class="htitle">相关文章</h2>
+            <ul class="otherlink">
+                {{range $k,$v := .GetArticleByCategoryID}}
+                    <li><a href="{{$v.Path}}" title="{{$v.Title}}">{{$v.Title}}</a></li>
+                {{end}}
+            </ul>
+        </div>
+
+    </div>
+    <!--lbox end-->
+
+
+    {{template "common/sidebar.html" .}}
+</article>
+
+{{template "common/footer.html" .}}
+
+<script type="text/javascript">
+    function like(id) {
+        $.post("/article-like/" + id,function (data,status){
+            alert("谢谢您的支持");
+            window.location.reload();
+        })
+    }
+</script>
+</body>
+</html>

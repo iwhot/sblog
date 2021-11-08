@@ -1,0 +1,49 @@
+{{define "common/top.html"}}
+<!--top begin-->
+<header id="header">
+  <div class="navbox">
+    <h2 id="mnavh"><span class="navicon"></span></h2>
+    <div class="logo"><a href="/">{{.Setting.Basic.SiteName}}</a></div>
+    <nav>
+
+      <ul id="starlist">
+
+        {{range $k,$v := .HeaderMenu }}
+          {{if eq $v.IsChild true}}
+            <li class="menu">
+            <a href="{{$v.Url}}" {{if eq $v.Active true}}id="selected"{{end}} target="{{$v.Target}}">{{$v.Title}}</a>
+              <ul class="sub">
+                {{$children := $v.Children}}
+                {{range $p,$q := $children}}
+                  <li><a href="{{$q.Url}}"  target="{{$q.Target}}">{{$q.Title}}</a></li>
+                {{end}}
+              </ul>
+              <span></span>
+            </li>
+
+              {{else}}
+              <li>
+                <a href="{{$v.Url}}" {{if eq $v.Active true}}id="selected"{{end}} target="{{$v.Target}}">{{$v.Title}}</a>
+              </li>
+          {{end}}
+        {{end}}
+
+      </ul>
+
+
+    </nav>
+    <div class="searchico"></div>
+  </div>
+</header>
+
+<div class="searchbox">
+  <div class="search">
+    <form action="/search" method="get" name="searchform" id="searchform">
+      <input name="keywords" id="keyboard" class="input_text" value="请输入关键字词" style="color: rgb(153, 153, 153);" onfocus="if(value=='请输入关键字词'){this.style.color='#000';value=''}" onblur="if(value==''){this.style.color='#999';value='请输入关键字词'}" type="text">
+      <input class="input_submit" value="搜索" type="submit" style="cursor:pointer;">
+    </form>
+  </div>
+  <div class="searchclose"></div>
+</div>
+<!--top end-->
+{{end}}

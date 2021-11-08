@@ -1,0 +1,18 @@
+{{define "common/meta.html"}}
+<link href="/storage/css/base.css" rel="stylesheet">
+<link href="/storage/css/m.css" rel="stylesheet">
+<script src="/storage/js/jquery-1.8.3.min.js" ></script>
+<script src="/storage/js/comm.js"></script>
+<!--[if lt IE 9]>
+<script src="/storage/js/modernizr.js"></script>
+<![endif]-->
+<link href="/storage/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link href="/storage/css/prettify.css" rel="stylesheet">
+<script src="/storage/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint linenums");
+        prettyPrint();
+    });
+</script>
+{{end}}

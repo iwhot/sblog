@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>列表页-{{.Setting.SEO.SeoTitle}}</title>
+    <meta name="keywords" content="{{.Setting.SEO.SeoKey}}"/>
+    <meta name="description" content="{{.Setting.SEO.SeoDesc}}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {{template "common/meta.html" .}}
+</head>
+<body>
+<!--top begin-->
+{{template "common/top.html" .}}
+<!--top end-->
+
+
+<article>
+    <!--lbox begin-->
+    <div class="lbox">
+
+        <div class="whitebg lanmu">
+
+            <h1>{{.TagInfo.TagName}}</h1>
+        </div>
+
+        <div class="whitebg bloglist">
+
+            <h2 class="htitle">
+                {{.TagInfo.TagName}}
+            </h2>
+
+            <ul>
+                <!--多图模式 置顶设计-->
+                {{range $k,$v := .ArticleList}}
+                    {{if ne $v.ThumbExt ""}}
+                        <li>
+                            <h3 class="blogtitle"><a href="/{{$v.Path}}" target="_blank"><b>【多图】</b>{{$v.Title}}</a></h3>
+                            <span class="bplist">
+                                {{range $p,$q := $v.Pics}}
+                                    <a href="/{{$v.Path}}"> <img src="{{$q}}" alt="{{$v.Title}}"></a>
+                                {{end}}
+                            </span>
+                            <p class="blogtext">{{$v.Desc}}</p>
+
+
+                            <p class="auth-span">
+                                <span class="muted">
+                                <i class="fa fa-clock-o"></i> {{$v.Createtime}}</span>
+                                <span class="muted"><i class="fa fa-eye"></i> {{$v.Read}}浏览</span>
+                                <span class="muted"><a href="javascript:;" data-action="ding" data-id="169" id="Addlike" class="action"><i class="fa fa-heart-o"></i><span class="count">{{$v.Like}}</span>个赞</a></span>
+                            </p>
+
+                        </li>
+                    {{else}}
+                        <!--单图-->
+                        <li>
+                            <h3 class="blogtitle"><a href="/{{$v.Path}}" target="_blank">{{$v.Title}}</a>
+                            </h3>
+                            {{if ne $v.Thumb ""}}
+                                <span class="blogpic imgscale">
+                                    <!--<i><a href="/{{$v.Path}}">原创模板</a></i>-->
+                                    <a href="{{$v.Path}}" title="{{$v.Title}}"><img src="{{$v.Thumb}}" alt="{{$v.Title}}"></a>
+                                </span>
+                            {{end}}
+                            <p class="blogtext">{{$v.Desc}}</p>
+
+
+                            <p class="auth-span">
+                                <span class="muted">
+                                <i class="fa fa-clock-o"></i> {{$v.Createtime}}</span>
+                                <span class="muted"><i class="fa fa-eye"></i> {{$v.Read}}浏览</span>
+                                <span class="muted"><a href="javascript:;" data-action="ding" data-id="169" id="Addlike" class="action"><i class="fa fa-heart-o"></i><span class="count">{{$v.Like}}</span>个赞</a></span>
+                            </p>
+
+
+                            <a href="/{{$v.Path}}" class="viewmore">阅读更多</a>
+                        </li>
+                    {{end}}
+                {{end}}
+            </ul>
+            <!--pagelist-->
+            {{.PageHtml}}
+            <!--pagelist end-->
+        </div>
+
+        <!--bloglist end-->
+    </div>
+
+
+    {{template "common/sidebar.html" .}}
+</article>
+
+{{template "common/footer.html" .}}
+</body>
+</html>
